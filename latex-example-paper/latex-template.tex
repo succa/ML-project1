@@ -1,0 +1,49 @@
+\documentclass[10pt,conference,compsocconf]{IEEEtran}
+
+\usepackage{hyperref}
+\usepackage{graphicx}	% For figure environment
+
+
+\begin{document}
+\title{Writing Scientific Papers and Software}
+
+\author{
+  Cheng Soon Ong\\
+  \textit{Department of Computer Science, ETH Zurich, Switzerland}
+}
+
+\maketitle
+
+\begin{abstract}
+  This project aims to use machine learning algorithms to predict the decay signature of particle collisions and understand if the event’s signature was the result of a Higgs boson (signal) or some other process/particle (background). After a preliminary analisys on the dataset, we tested our models (including a neural network framework) and we achieve a 0.83951 score on Kaggle.
+\end{abstract}
+
+\section{Introduction}
+TODO
+\section{Models and Methods}
+TODO
+\subsection{Data Analysis}
+\subsubsection{Outliers}
+\subsubsection{Jet number}
+\subsubsection{Feature expansion}
+
+\subsection{Models}
+\subsubsection{Baselines}
+\subsubsection{Neural Network}
+In parallel with the baselines, we decided to implement a Fully Connected Neural Network framework, hoping that a more complex model could lead to an higher score. The framework is based only on numpy arrays and standard math libraries. To make it versatile, we had a bottom-up approach, starting with the implementation of the basic operations and combine them to create Linear Layers. The key point of the network is to make is backward complient, that is being able to compute the gradient of the loss with respect to the parameters of the model. To achieve this goal, we implemented two simple ideas:
+\begin{itemize}
+\item Each operation keep track of its inputs; in this way it can compute the derivative of its output with respect to them, multiply it with the  current gradient and pass it to its inputs.
+\item Each operand must be able to propagate the gradient to the operation that computed the operand itself and store the received gradient (wich represent the gradient of the loss with respect to the operand) which will be possibly used to update this parameter during the parameter update phase. We achieved this by implementing the Variable class, that wraps all the necessary information: the operand itself, its gradient and the link to the operation that generated it.
+\end{itemize}
+This structure allows to perform both the forward and the backward passes. In the forward pass, each operation takes its inputs Variable and produces a new output Variable which contains the resulting tensor, a gradient tensor initialized to zeros and the link to the operation itself. Then, this new Variable can be used as input for any subsequent operation, and the process is repeated. Starting from the input, this chain of operations continues until the computation of the loss. In the backward pass, each operation receives the gradient from its output Variable, i.e. the gradient of the loss with respect to it, and multiply it with the gradient of the output Variable with respect to each input Variable. The obtained gradients are finally passed to the relative input Variables. Whenever a Variable receives a gradient, it is accumulated in its gradient field and then passes it to the previous operation if any.
+
+\section{Results}
+TODO
+
+\section{Discussion}
+TODO
+\bibliographystyle{IEEEtran}
+\bibliography{literature}
+
+\end{document}
+\grid
